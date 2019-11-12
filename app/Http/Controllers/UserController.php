@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-use  App\User;
+use App\User;
+use Tymon\JWTAuth\Facades\JWTAuth; //use this library
+
 
 class UserController extends Controller
 {
      /**
-     * Instantiate a new UserController instance.
+     * Instantiate a new UserController instance that guarded by auth middleware.
      *
      * @return void
      */
@@ -23,8 +25,8 @@ class UserController extends Controller
      * @return Response
      */
     public function profile()
-    {
-        return response()->json(['user' => Auth::user()], 200);
+    {        
+        return response()->json(['user' => Auth::user()], 200);        
     }
 
     /**
@@ -34,11 +36,12 @@ class UserController extends Controller
      */
     public function allUsers()
     {
-         return response()->json(['users' =>  User::all()], 200);
+        $token = JWTAuth::getToken();
+        return response()->json(['users' =>  User::all()], 200);
     }
 
     /**
-     * Get one user.
+     * Get one user by id.
      *
      * @return Response
      */
@@ -54,6 +57,17 @@ class UserController extends Controller
             return response()->json(['message' => 'user not found!'], 404);
         }
 
+    }
+
+    /**
+     * Invalidate provided token.
+     *
+     * @return Response
+     */
+    public function logout()
+    {        
+        Auth::invalidate();
+        return response()->json(['message' => 'provided token invalidated'], 200);
     }
 
 }
