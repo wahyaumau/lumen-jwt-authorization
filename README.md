@@ -1,6 +1,9 @@
 # Lumen jwt authentication
 -   `Lumen Version : 5.8.12`
 
+## Check link in the description
+`https://dev.to/ndiecodes/build-a-jwt-authenticated-api-with-lumen-2afm`
+
 ## Package added :
 -   `tymon/jwt-auth Version: dev-develop`
 
