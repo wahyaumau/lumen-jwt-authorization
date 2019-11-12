@@ -1,9 +1,6 @@
 # Lumen jwt authentication
 -   `Lumen Version : 5.8.12`
 
-## Check link in the description
-`https://dev.to/ndiecodes/build-a-jwt-authenticated-api-with-lumen-2afm`
-
 ## Package added :
 -   `tymon/jwt-auth Version: dev-develop`
 
@@ -32,5 +29,6 @@
 ## Access guarded route
 ![alt text](https://res.cloudinary.com/practicaldev/image/fetch/s--Y5N256_j--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://res.cloudinary.com/iamndie/image/upload/v1566677009/Screen_Shot_2019-08-24_at_8.54.39_PM_vqr7bx.png)
 
-
+## Check link in the description for more detail!!
+`https://dev.to/ndiecodes/build-a-jwt-authenticated-api-with-lumen-2afm`
 
