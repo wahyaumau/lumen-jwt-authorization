@@ -32,7 +32,8 @@
 ![alt text](https://i.ibb.co/6YbsPhf/Screenshot-139.png)
 
 ## Reference for authentication
-https://dev.to/ndiecodes/build-a-jwt-authenticated-api-with-lumen-2afm
+-   https://dev.to/ndiecodes/build-a-jwt-authenticated-api-with-lumen-2afm
+-   https://github.com/wahyaumau/lumen-jwt-authentication
 
 ## Authorization
 -   Authorization is based on role of user
@@ -40,15 +41,15 @@ https://dev.to/ndiecodes/build-a-jwt-authenticated-api-with-lumen-2afm
 -   The database schema for authorization : User to Role -> Many to Many
 -   The middleware for authorization is in app/Middleware/RoleMiddleware.php
 -   The middleware registration for application is in app/bootstrap/app.php with this code : 
-	`$app->routeMiddleware([
-	    'auth' => App\Http\Middleware\Authenticate::class,
-	    'role' => App\Http\Middleware\RoleMiddleware::class,
-	]);`
+`$app->routeMiddleware([
+    'auth' => App\Http\Middleware\Authenticate::class,
+    'role' => App\Http\Middleware\RoleMiddleware::class,
+]);`
 -   Example of protecting some action by some role is in UserController@construct with this code :
-	`public function __construct(){                
-        $this->middleware('auth');
-        $this->middleware('role:Administrator,Super Administrator', ['except' => ['logout']]);
-	 }`
+`public function __construct(){
+    $this->middleware('auth');
+    $this->middleware('role:Administrator,Super Administrator', ['except' => ['logout']]);
+}`
 -	This mean that user need to be authenticated with valid provided token to access all of method in UserController
 	After authentication guard, next is role guard, that only user with Administrator or Super Administrator role can access all of method in UserController except logout method, because you don't need to know certain role to log out, right?
  -	Instead of using 'except' keyword, you can also guard method by 'only' keyword, which implies that guard is 'only' for spesific method	 
