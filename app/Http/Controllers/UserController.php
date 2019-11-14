@@ -10,13 +10,14 @@ use Tymon\JWTAuth\Facades\JWTAuth; //use this library
 class UserController extends Controller
 {
      /**
-     * Instantiate a new UserController instance that guarded by auth middleware.
+     * Instantiate a new UserController instance that guarded by auth and role middleware.
      *
      * @return void
      */
     public function __construct()
-    {
+    {                
         $this->middleware('auth');
+        $this->middleware('role:Administrator,Super Administrator', ['except' => ['logout']]);
     }
 
     /**
@@ -25,8 +26,8 @@ class UserController extends Controller
      * @return Response
      */
     public function profile()
-    {        
-        return response()->json(['user' => Auth::user()], 200);        
+    {                
+        return $this->apiResponse(200, 'success', ['user' => Auth::User()]);
     }
 
     /**
@@ -35,9 +36,8 @@ class UserController extends Controller
      * @return Response
      */
     public function allUsers()
-    {
-        $token = JWTAuth::getToken();
-        return response()->json(['users' =>  User::all()], 200);
+    {        
+        return $this->apiResponse(200, 'success', ['users' => User::all()]);        
     }
 
     /**
@@ -50,11 +50,11 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
 
-            return response()->json(['user' => $user], 200);
+            return $this->apiResponse(200, 'success', ['user' => $user]);
 
         } catch (\Exception $e) {
 
-            return response()->json(['message' => 'user not found!'], 404);
+            return $this->apiResponse(201, 'user not found', null);
         }
 
     }
@@ -67,7 +67,6 @@ class UserController extends Controller
     public function logout()
     {        
         Auth::invalidate();
-        return response()->json(['message' => 'provided token invalidated'], 200);
+        return $this->apiResponse(200, 'token invalidated', null);
     }
-
 }

@@ -18,20 +18,21 @@ class AuthController extends Controller
     public function register(Request $request)
     {        
         $this->validate($request, [
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users',
+            'username' => 'required|unique:users',
             'password' => 'required|confirmed',
         ]);
 
         try {
             $user = new User;
-            $user->name = $request->input('name');
-            $user->email = $request->input('email');            
-            $user->password = app('hash')->make($request->input('password'));
-            $user->save();            
-            return response()->json(['user' => $user, 'message' => 'CREATED'], 201);
+            $user->username = $request->username;
+            $user->password = app('hash')->make($request->password);
+            $user->save();
+
+            // Default role is user
+            $user->roles()->attach(2);
+            return $this->apiResponse(200, 'User Created', ['user'=>$user]);
         } catch (\Exception $e) {            
-            return response()->json(['message' => 'User Registration Failed!'], 409);
+            return $this->apiResponse(201, 'Registration Failed', null);
         }
 
     }
@@ -45,28 +46,41 @@ class AuthController extends Controller
     public function login(Request $request)
     {        
         $this->validate($request, [
-            'email' => 'required|string',
+            'username' => 'required|string',
             'password' => 'required|string',
         ]);    
 
-        $credentials = $request->only(['email', 'password']);
+        $credentials = $request->only(['username', 'password']);
         try {
             if (!$token = Auth::attempt($credentials)) {
-                return response()->json(['message' => 'Unauthorized'], 401);
+                return $this->apiResponse(201, 'Wrong credentials', null);
             }
         }catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-            return response()->json(['token_expired'], 500);
+            return $this->apiResponse(500, 'Token Expired', null);
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-            return response()->json(['token_invalid'], 500);
+            return $this->apiResponse(500, 'Token Invalid', null);            
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
-            return response()->json(['token_absent' => $e->getMessage()], 500);
-        }        
+            return $this->apiResponse(500, $e->getMessage(), null);            
+        }
 
-        return response()->json([
+        $user = User::where('username', $request->username)->first();
+        $roles = $user->roles;
+        $returned_roles = [];
+
+        foreach ($roles as $key => $role) {
+            unset($role->pivot);
+            unset($role->created_at);
+            unset($role->updated_at);
+            array_push($returned_roles, $role);
+        }            
+
+        $token = array(
             'token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL().' minutes'
-        ], 200);
+            'expires_in' => Auth::factory()->getTTL().' minutes',
+            'roles' => $returned_roles
+        );
+        return $this->apiResponse(200, 'Authentication success', ['credential'=> $token]);
     }
 
 }

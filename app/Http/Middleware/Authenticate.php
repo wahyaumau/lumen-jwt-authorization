@@ -36,9 +36,8 @@ class Authenticate
     public function handle($request, Closure $next, $guard = null)
     {
         if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+            return redirect()->route('api.response',['status'=>'201', 'message'=>'Unauthenticated']);
         }
-
         return $next($request);
     }
 }

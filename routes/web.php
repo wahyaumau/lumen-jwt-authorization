@@ -15,13 +15,14 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-
-// API route group
-$router->group(['prefix' => 'api'], function () use ($router) {    
-    $router->post('register', 'AuthController@register');     
-    $router->post('login', 'AuthController@login');
-    $router->post('logout', 'UserController@logout');
-    $router->get('profile', 'UserController@profile');
-    $router->get('users/{id}', 'UserController@singleUser');
-    $router->get('users', 'UserController@allUsers');
+$router->group(['prefix' => 'api'], function () use ($router) {
+	$router->post('register', 'AuthController@register');
+	$router->post('login', 'AuthController@login');
+	$router->post('logout', 'UserController@logout');
+	$router->get('profile', 'UserController@profile');
+	$router->get('users/{id}', 'UserController@singleUser');
+	$router->get('users', 'UserController@allUsers');
+	$router->get('response/{status}/{message}', [
+    	'as' => 'api.response', 'uses' => 'Controller@apiResponse'
+	]);
 });
