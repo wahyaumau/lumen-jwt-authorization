@@ -1,4 +1,4 @@
-# Lumen jwt authentication and role authorization
+# Lumen jwt authentication and role based authorization
 -   Lumen Version : 5.8.12
 
 ## Package added :
